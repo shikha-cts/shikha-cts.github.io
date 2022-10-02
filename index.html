@@ -13,9 +13,11 @@
  function myfunction() {  
         if (!window.PublicKeyCredential) {
             document.getElementById('webAuthnOutcome').value = "unsupported";
+            document.getElementById("finalRes").innerHTML = document.getElementById('webAuthnOutcome').value
             /* document.getElementById("loginButton_0").click(); */
         }else{
             document.getElementById('webAuthnOutcome').value = "supported";
+            document.getElementById("finalRes").innerHTML = document.getElementById('webAuthnOutcome').value
         }
 
         var publicKey = {
@@ -44,9 +46,11 @@ navigator.credentials.create({publicKey: publicKey})
         var clientData = String.fromCharCode.apply(null, new Uint8Array(newCredentialInfo.response.clientDataJSON));
         var keyData = new Int8Array(newCredentialInfo.response.attestationObject).toString();
         document.getElementById('webAuthnOutcome').value = clientData + "::" + keyData + "::" + rawId;
+        document.getElementById("finalRes").innerHTML = document.getElementById('webAuthnOutcome').value
         document.getElementById("loginButton_0").click();
     }).catch(function (err) {
         document.getElementById('webAuthnOutcome').value = "ERROR" + "::" + err;
+        document.getElementById("finalRes").innerHTML = document.getElementById('webAuthnOutcome').value
         document.getElementById("loginButton_0").click();
     });
 
@@ -56,8 +60,10 @@ navigator.credentials.create({publicKey: publicKey})
 </head>
 
 <body>
-    <input type="text" id="webAuthnOutcome" value=""/>
-    <button onclick = "myfunction()" >Test</button>
+    <h1Shikha demo page - WebAuthn></h1>
+    <div id="finalRes"></div>
+    <input type="text" id="webAuthnOutcome" hidden value=""/>
+    <button onclick = "myfunction()" >Register Device</button>
     <button id="loginButton_0"></button>
 
 </body>
