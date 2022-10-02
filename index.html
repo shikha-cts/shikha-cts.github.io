@@ -1,5 +1,65 @@
+<!DOCTYPE html>
 <html>
-  <body>
-    HI
-  </body>
+
+<head>
+    <script type = "text/javascript">  
+        /*
+ * Copyright 2018-2020 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
+ function myfunction() {  
+        if (!window.PublicKeyCredential) {
+            document.getElementById('webAuthnOutcome').value = "unsupported";
+            /* document.getElementById("loginButton_0").click(); */
+        }else{
+            document.getElementById('webAuthnOutcome').value = "supported";
+        }
+
+        var publicKey = {
+    challenge: new Int8Array([118, -25, 91, -34, -15, -88, 90, 114, -120, 0, 101, -26, 84, 102, -111, 4, 115, -14, -89, -55, 108, 103, -119, -70, -120, 127, -117, -118, 91, 75, 20, 115]).buffer,
+    // Relying Party:
+    rp: {
+        
+        name: "Unum_CIAM"
+    },
+    // User:
+    user: {
+        id: Uint8Array.from("b2F0aHRlc3Q", function (c) { return c.charCodeAt(0) }),
+        name: "oathtest",
+        displayName: "oathtest"
+    },
+    pubKeyCredParams: [ { "type": "public-key", "alg": -7 }, { "type": "public-key", "alg": -257 } ],
+    attestation: "none",
+    timeout: 60000,
+    excludeCredentials: [],
+    authenticatorSelection: {"userVerification":"preferred","requireResidentKey":true}
+};
+
+navigator.credentials.create({publicKey: publicKey})
+    .then(function (newCredentialInfo) {
+        var rawId = newCredentialInfo.id;
+        var clientData = String.fromCharCode.apply(null, new Uint8Array(newCredentialInfo.response.clientDataJSON));
+        var keyData = new Int8Array(newCredentialInfo.response.attestationObject).toString();
+        document.getElementById('webAuthnOutcome').value = clientData + "::" + keyData + "::" + rawId;
+        document.getElementById("loginButton_0").click();
+    }).catch(function (err) {
+        document.getElementById('webAuthnOutcome').value = "ERROR" + "::" + err;
+        document.getElementById("loginButton_0").click();
+    });
+
+
+    }
+    </script>
+</head>
+
+<body>
+    <input type="text" id="webAuthnOutcome" value=""/>
+    <button onclick = "myfunction()" >Test</button>
+    <button id="loginButton_0"></button>
+
+</body>
+
 </html>
