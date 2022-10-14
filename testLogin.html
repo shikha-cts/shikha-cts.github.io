@@ -11,6 +11,41 @@
  * to such license between the licensee and ForgeRock AS.
  */
  function myfunction() {  
+     /*
+* Copyright 2018-2020 ForgeRock AS. All Rights Reserved
+*
+* Use of this code requires a commercial software license with ForgeRock AS.
+* or with one of its affiliates. All use shall be exclusively subject
+* to such license between the licensee and ForgeRock AS.
+*/
+
+if (!window.PublicKeyCredential) {
+    document.getElementById('webAuthnOutcome').value = "unsupported";
+    document.getElementById("loginButton_0").click();
+}
+
+var options = {
+    
+    challenge: new Int8Array([22, 96, 10, 84, -49, -9, -60, -24, -22, 115, 44, 63, 32, 87, 34, 71, 124, 60, 6, 50, 85, 69, -24, -21, -62, 62, -60, 83, -39, 90, -74, -76]).buffer,
+    timeout: 60000,
+    userVerification: "preferred",
+    allowCredentials: [{ "type": "public-key", "id": new Int8Array([52, -31, -1, -9, 48, 59, 1, 69, -55, -78, -100, 56, -51, -38, -114, 52, -97, 59, 26, 28, -5, -68, 73, 24, -20, 43, 120, 73, -2, -9, -52, 95]).buffer }]
+};
+
+navigator.credentials.get({ "publicKey" : options })
+    .then(function (assertion) {
+        var clientData = String.fromCharCode.apply(null, new Uint8Array(assertion.response.clientDataJSON));
+        var authenticatorData = new Int8Array(assertion.response.authenticatorData).toString();
+        var signature = new Int8Array(assertion.response.signature).toString();
+        var rawId = assertion.id;
+        var userHandle = String.fromCharCode.apply(null, new Uint8Array(assertion.response.userHandle));
+        document.getElementById('webAuthnOutcome').value = clientData + "::" + authenticatorData + "::" + signature + "::" + rawId + "::" + userHandle;
+        document.getElementById("loginButton_0").click();
+    }).catch(function (err) {
+        document.getElementById('webAuthnOutcome').value = "ERROR" + "::" + err;
+        document.getElementById("loginButton_0").click();
+    });
+
       }
     </script>
 </head>
@@ -21,7 +56,7 @@
     <br>
     <h2>Print Response after fingerPrint <div id="finalRes" style="color: blue;"></div></h2>
     <br>
-    <input type="text" id="webAuthnOutcome" hidden value=""/>
+    <input type="text" id="webAuthnOutcome" value=""/>
     <button onclick = "myfunction()" >Login</button>
     <button id="loginButton_0" hidden></button>
 
